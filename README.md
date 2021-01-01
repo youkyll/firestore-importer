@@ -1,4 +1,4 @@
-# firestore-impoter
+# firestore-importer
 
 firestore-impoter is a package importing object data to firestore.
 
