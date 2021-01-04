@@ -1,10 +1,10 @@
-import { Firestore } from '@google-cloud/firestore'
+import { Firestore, DocumentData } from '@google-cloud/firestore'
 
 class FirestoreImporter {
   private _app: Firestore
   private _subCollectionNames: string[]
 
-  constructor(app: Firestore, options: any = {}) {
+  constructor(app: Firestore, options: Options = {}) {
     this._app = app
     this._subCollectionNames = options['subCollectionNames'] || []
   }
@@ -13,7 +13,7 @@ class FirestoreImporter {
     return new FirestoreImporter(app)
   }
 
-  async import(schemaData: SchemaData) {
+  async import(schemaData: CollectionSchema) {
     const batch = this._app.batch()
     for (const collectionName in schemaData) {
       const collections = schemaData[collectionName]
@@ -49,7 +49,7 @@ class FirestoreImporter {
   static splitIntoSubCollections(
     collectionSchema: CollectionSchema,
     subCollectionNames: string[] = []
-  ): [CollectionData, SubCollections] {
+  ): [DocumentData, SubCollectionSchema] {
     let collectionData: any = {}
     let subCollections: any = {}
 
@@ -72,6 +72,8 @@ class FirestoreImporter {
 
 export default FirestoreImporter
 
+
+
 /**
  * @example
  * const schemaData = {
@@ -89,18 +91,14 @@ export default FirestoreImporter
  *   }
  * }
  */
-type SchemaData = {
-  [key: string]: CollectionData
-}
-
-type CollectionData = {
-  [key: string]: Object
-}
-
 type CollectionSchema = {
-  [key: string]: any
+  [collectionName: string]: DocumentData & SubCollectionSchema
 }
 
-type SubCollections = {
-  [key: string]: CollectionData
+type SubCollectionSchema = {
+  [subCollectionName: string]: DocumentData
+}
+
+type Options = {
+  subCollectionNames?: string[]
 }
