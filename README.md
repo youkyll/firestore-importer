@@ -32,10 +32,14 @@ const data = {
   ]
 }
 
-await importer.import(data, {
-  subcollections: [
+const instance = await importer.import(data, {
+  // specify sub collections. Then a nested sub collection object is imported.
+  subCollections: [
     'user-items',
   ]
 })
+
+// delete all imported documents by id.
+await instance.flush()
 
 ```
